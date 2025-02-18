@@ -26,7 +26,7 @@ export class BaldrsListService {
 
         return listKeys
             .flatMap(key => enemies[key] || [])
-            .filter(enemy => Number(enemy.total) < userTotal - 300)
+            .filter(enemy => Number(enemy.total.replace(',', '')) < userTotal - 300)
             .sort((a, b) => Number(b.lvl) - Number(a.lvl))
     }
 
