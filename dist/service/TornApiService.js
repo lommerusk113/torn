@@ -1,22 +1,20 @@
 export class TornApiService {
-    apiKey;
     baseUrl;
-    constructor(apiKey) {
-        this.apiKey = apiKey;
+    constructor() {
         this.baseUrl = "https://api.torn.com";
     }
-    async getUser(userId) {
-        return this._fetchFromTorn(`user/${userId}?selections=basic`);
+    async getUser(userId, key) {
+        return this._fetchFromTorn(`user/${userId}?selections=basic`, key);
     }
-    async getUserStats(userId) {
-        return this._fetchFromTorn(`user/${userId}?selections=battlestats`);
+    async getUserStats(userId, key) {
+        return this._fetchFromTorn(`user/${userId}?selections=battlestats`, key);
     }
-    async checkHospital(userId) {
-        const userData = await this.getUser(userId);
+    async checkHospital(userId, key) {
+        const userData = await this.getUser(userId, key);
         return userData?.status?.state === "Hospital";
     }
-    async _fetchFromTorn(endpoint) {
-        const url = `${this.baseUrl}/${endpoint}&key=${this.apiKey}`;
+    async _fetchFromTorn(endpoint, key) {
+        const url = `${this.baseUrl}/${endpoint}&key=${key}`;
         try {
             const response = await fetch(url);
             if (!response.ok)

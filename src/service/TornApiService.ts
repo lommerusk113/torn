@@ -1,28 +1,26 @@
 export class TornApiService {
-    private apiKey: string
     private baseUrl: string
 
 
-    constructor(apiKey: string) {
-        this.apiKey = apiKey;
+    constructor() {
         this.baseUrl = "https://api.torn.com";
     }
 
-    public async getUser(userId: string) {
-        return this._fetchFromTorn(`user/${userId}?selections=basic`);
+    public async getUser(userId: string, key: string) {
+        return this._fetchFromTorn(`user/${userId}?selections=basic`, key);
     }
 
-    public async getUserStats(userId: string) {
-        return this._fetchFromTorn(`user/${userId}?selections=battlestats`);
+    public async getUserStats(userId: string, key: string) {
+        return this._fetchFromTorn(`user/${userId}?selections=battlestats`, key);
     }
 
-    public async checkHospital(userId: string) {
-        const userData = await this.getUser(userId);
+    public async checkHospital(userId: string, key: string) {
+        const userData = await this.getUser(userId, key);
         return userData?.status?.state === "Hospital";
     }
 
-    private async _fetchFromTorn(endpoint: string) {
-        const url = `${this.baseUrl}/${endpoint}&key=${this.apiKey}`;
+    private async _fetchFromTorn(endpoint: string, key: string) {
+        const url = `${this.baseUrl}/${endpoint}&key=${key}`;
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`API Error: ${response.statusText}`);

@@ -1,6 +1,6 @@
 import { BaldrsListService } from "./service/BaldrsListService.js";
 import { TornApiService } from "./service/TornApiService.js";
-const apiKey = 'JMkvpqGZ9G6xb8FU';
+const apiKey = '';
 const userId = '3593952';
 const tornService = new TornApiService(apiKey);
 const blService = new BaldrsListService(apiKey);

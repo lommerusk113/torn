@@ -1,9 +1,7 @@
 export class BaldrsListService {
-    apiKey;
-    baseUrl;
-    constructor(apiKey) {
-        this.apiKey = apiKey;
-        this.baseUrl = "https://api.torn.com";
+    tornService;
+    constructor(tornService) {
+        this.tornService = tornService;
     }
     async fetchList() {
         try {
@@ -21,22 +19,34 @@ export class BaldrsListService {
             : ["Baldr's Extra List 1", "Baldr's Extra List 2", "Baldr's Extra List 3"];
         return listKeys
             .flatMap(key => enemies[key] || [])
-            .filter(enemy => Number(enemy.total) < userTotal - 200)
-            .sort((a, b) => Number(b.lvl) - Number(a.lvl))
-            .slice(0, 35);
+            .filter(enemy => Number(enemy.total) < userTotal - 300)
+            .sort((a, b) => Number(b.lvl) - Number(a.lvl));
     }
     async getAcceptableEnemies(userTotal) {
         const enemies = await this.fetchList();
         return this.filterEnemies(enemies, userTotal);
     }
-    async getFilteredEnemies(userTotal, tornService) {
+    async getEnemy(userTotal, key) {
         const acceptableEnemies = await this.getAcceptableEnemies(userTotal);
-        const filteredEnemies = [];
-        for (const enemy of acceptableEnemies) {
-            if (!(await tornService.checkHospital(enemy.id))) {
-                filteredEnemies.push(enemy);
+        const chunkSize = 10;
+        for (let i = 0; i < acceptableEnemies.length; i += chunkSize) {
+            const availableEnemies = [];
+            const chunk = acceptableEnemies.slice(i, i + chunkSize);
+            await Promise.all(chunk.map(async (user) => {
+                try {
+                    const isInHospital = await this.tornService.checkHospital(user.id, key);
+                    if (!isInHospital) {
+                        console.log(`user: ${user.name} in hospital: ${isInHospital}`);
+                        availableEnemies.push(user.id);
+                    }
+                }
+                catch (error) {
+                    console.error(`Error checking hospital status for user ${user}:`, error);
+                }
+            }));
+            if (availableEnemies.length) {
+                return availableEnemies[0];
             }
         }
-        return filteredEnemies;
     }
 }
