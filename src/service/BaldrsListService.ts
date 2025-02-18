@@ -1,8 +1,9 @@
-import { BaldrsResponse, BaldrsList } from "../Types/index.js";
+import { BaldrsResponse, BaldrsList, HospitalList } from "../Types/index.js";
 import { TornApiService } from "./TornApiService.js";
 
 export class BaldrsListService {
     private tornService: TornApiService
+    private UserCache: HospitalList[] = []
 
     constructor(tornService: TornApiService) {
         this.tornService = tornService
@@ -36,21 +37,37 @@ export class BaldrsListService {
     }
 
     public async getEnemy(userTotal: number, key: string): Promise<string | undefined> {
-        const acceptableEnemies = await this.getAcceptableEnemies(userTotal);
-
-
+        const now = Date.now()
+        const acceptableEnemies = (await this.getAcceptableEnemies(userTotal))
+        .filter((enemy) => {
+            const cacheIndex = this.UserCache.findIndex(user => user.id === enemy.id);
+            if (cacheIndex !== -1) {
+                if (this.UserCache[cacheIndex].release <= now) {
+                    this.UserCache.splice(cacheIndex, 1);
+                    return true;
+                }
+                return false;
+            }
+            return true
+        });
         const chunkSize = 10;
+
+
         for (let i = 0; i < acceptableEnemies.length; i += chunkSize) {
             const availableEnemies: string[] = [];
             const chunk = acceptableEnemies.slice(i, i + chunkSize);
 
             await Promise.all(chunk.map(async (user) => {
                 try {
-                  const isInHospital = await this.tornService.checkHospital(user.id, key);
 
-                  if (!isInHospital) {
-                    console.log(`user: ${user.name} in hospital: ${isInHospital}`)
+                  const hospitalizedUntill = await this.tornService.checkHospital(user.id, key);
+
+                  if (!hospitalizedUntill) {
+                    console.log(`user: ${user.name} in hospital untill: ${hospitalizedUntill}`)
                     availableEnemies.push(user.id)
+                    this.UserCache.push({id: user.id,  release: Date.now() + 5 * 60 * 1000})
+                  } else {
+                    this.UserCache.push({id: user.id,  release: hospitalizedUntill})
                   }
                 } catch (error) {
                   console.error(`Error checking hospital status for user ${user}:`, error);

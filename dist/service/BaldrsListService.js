@@ -1,5 +1,6 @@
 export class BaldrsListService {
     tornService;
+    UserCache = [];
     constructor(tornService) {
         this.tornService = tornService;
     }
@@ -27,17 +28,33 @@ export class BaldrsListService {
         return this.filterEnemies(enemies, userTotal);
     }
     async getEnemy(userTotal, key) {
-        const acceptableEnemies = await this.getAcceptableEnemies(userTotal);
+        const now = Date.now();
+        const acceptableEnemies = (await this.getAcceptableEnemies(userTotal))
+            .filter((enemy) => {
+            const cacheIndex = this.UserCache.findIndex(user => user.id === enemy.id);
+            if (cacheIndex !== -1) {
+                if (this.UserCache[cacheIndex].release <= now) {
+                    this.UserCache.splice(cacheIndex, 1);
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        });
         const chunkSize = 10;
         for (let i = 0; i < acceptableEnemies.length; i += chunkSize) {
             const availableEnemies = [];
             const chunk = acceptableEnemies.slice(i, i + chunkSize);
             await Promise.all(chunk.map(async (user) => {
                 try {
-                    const isInHospital = await this.tornService.checkHospital(user.id, key);
-                    if (!isInHospital) {
-                        console.log(`user: ${user.name} in hospital: ${isInHospital}`);
+                    const hospitalizedUntill = await this.tornService.checkHospital(user.id, key);
+                    if (!hospitalizedUntill) {
+                        console.log(`user: ${user.name} in hospital untill: ${hospitalizedUntill}`);
                         availableEnemies.push(user.id);
+                        this.UserCache.push({ id: user.id, release: Date.now() + 5 * 60 * 1000 });
+                    }
+                    else {
+                        this.UserCache.push({ id: user.id, release: hospitalizedUntill });
                     }
                 }
                 catch (error) {

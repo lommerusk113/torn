@@ -19,3 +19,8 @@ export type BaldrListKey =
   | "Baldr's DOMINO List";
 
  export type BaldrsResponse = Record<BaldrListKey, BaldrsList[]>;
+
+ export type HospitalList = {
+  id: string
+  release: number
+ }

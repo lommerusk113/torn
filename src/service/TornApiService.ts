@@ -14,9 +14,9 @@ export class TornApiService {
         return this._fetchFromTorn(`user/${userId}?selections=battlestats`, key);
     }
 
-    public async checkHospital(userId: string, key: string) {
+    public async checkHospital(userId: string, key: string): Promise<number | null> {
         const userData = await this.getUser(userId, key);
-        return userData?.status?.state === "Hospital";
+        return userData?.status?.state === "Hospital" ? userData.status.until : null
     }
 
     private async _fetchFromTorn(endpoint: string, key: string) {
