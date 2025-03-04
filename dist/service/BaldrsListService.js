@@ -20,8 +20,7 @@ export class BaldrsListService {
             : ["Baldr's Extra List 1", "Baldr's Extra List 2", "Baldr's Extra List 3"];
         return listKeys
             .flatMap(key => enemies[key] || [])
-            .filter(enemy => Number(enemy.total.replace(',', '') < userTotal - 300;
-        })
+            .filter(enemy => Number(enemy.total.replace(',', '')) < userTotal - 300)
             .sort((a, b) => Number(b.lvl) - Number(a.lvl));
     }
     async getAcceptableEnemies(userTotal) {
