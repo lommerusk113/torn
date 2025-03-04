@@ -1,3 +1,4 @@
+import { FactionData } from "../Types/index.js";
 export class TornApiService {
     private baseUrl: string
 
@@ -12,6 +13,10 @@ export class TornApiService {
 
     public async getUserStats(userId: string, key: string) {
         return this._fetchFromTorn(`user/${userId}?selections=battlestats`, key);
+    }
+
+    public async getFaction(factionId: string, apiKey: string): Promise<FactionData> {
+        return this._fetchFromTorn(`faction/${factionId}?selections=basic`, apiKey)
     }
 
     public async checkHospital(userId: string, key: string): Promise<number | null> {

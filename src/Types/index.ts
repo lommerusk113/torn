@@ -24,3 +24,71 @@ export type BaldrListKey =
   id: string
   release: number
  }
+
+ export interface FactionData {
+  ID: number;
+  name: string;
+  leader: number;
+  "co-leader": number;
+  respect: number;
+  age: number;
+  best_chain: number;
+  raid_wars: Record<string, any>;
+  peace: Record<string, any>;
+  members: Record<string, FactionMember>;
+}
+
+export interface MemberWithId extends FactionMember {
+  id: number;
+}
+
+
+
+export interface FactionMember {
+  name: string;
+  level: number;
+  days_in_faction: number;
+  last_action: {
+    status: Status;
+    timestamp: number;
+    relative: string;
+  };
+  status: {
+    description: string;
+    details: string;
+    state: string;
+    until: number;
+  };
+  position: string;
+}
+
+export enum Status {
+  Idle,
+  Online,
+  Offline
+}
+
+export interface FactionTracker {
+  id?: number;
+  faction_id: string;
+  api_key: string;
+  is_active: boolean;
+}
+
+export interface MemberStatus {
+  id?: number;
+  faction_id: string;
+  member_id:  number;
+  member_name: string;
+  status: Status;
+  created_at?: string;
+}
+
+export interface MemberStatusRecord {
+  member_id: number;
+  member_name: string;
+  statusHistory: {
+    timestamp?: string;
+    status: Status;
+  }[];
+}
