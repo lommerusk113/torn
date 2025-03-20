@@ -6,9 +6,16 @@ import _ from 'lodash';
 const repository = new TrackerRepository()
 const tornApiService = new TornApiService()
 
+const tryTrack = async () => {
+    try{
+        trackUsers()
+    } catch(error: any){
+        console.log(error)
+    }
+}
+
 const trackUsers = async () => {
 
-    console.log("Tracking users...")
     const trackers = await repository.getActiveTrackers()
 
     if (trackers.length > 0) {
@@ -63,4 +70,4 @@ const getNewestUpdatePerMember = (statuses: MemberStatus[] | undefined): MemberS
     );
 };
 
-export default trackUsers
+export default tryTrack

@@ -49,7 +49,6 @@ export class BaldrsListService {
                 try {
                     const hospitalizedUntill = await this.tornService.checkHospital(user.id, key);
                     if (!hospitalizedUntill) {
-                        console.log(`user: ${user.name} in hospital untill: ${hospitalizedUntill}`);
                         availableEnemies.push(user.id);
                         this.UserCache.push({ id: user.id, release: Date.now() + 5 * 60 * 1000 });
                     }

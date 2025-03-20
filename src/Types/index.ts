@@ -33,7 +33,7 @@ export type BaldrListKey =
   respect: number;
   age: number;
   best_chain: number;
-  raid_wars: Record<string, any>;
+  ranked_wars: Record<string, any>;
   peace: Record<string, any>;
   members: Record<string, FactionMember>;
 }
@@ -91,4 +91,56 @@ export interface MemberStatusRecord {
     timestamp?: string;
     status: Status;
   }[];
+}
+
+export enum UserStatus {
+  hospital = 'hospital',
+  okay = 'okay',
+  traveling = 'traveling'
+}
+
+export interface UserState {
+  userStatus: UserStatus
+  untill?: string
+}
+
+export interface Stats {
+  str: string
+  def: string
+  spd: string
+  dex: string
+}
+
+export interface Location {
+  current: string,
+  destination?: string
+  initiated?: number
+}
+
+export interface WarMember {
+  id?: number
+  member_id: number
+  member_name: string
+  faction_id: string
+  activity: Status
+  status: UserState
+  stats?: Stats
+  destination?: string
+  location: Location
+  level: number
+}
+
+export enum Locations {
+  torn = 'Torn',
+  china = 'China',
+  japan = 'Japan',
+  hawaii = 'Hawaii',
+  mexico = 'Mexico',
+  canada = 'Canada',
+  cayman_islands  = 'Cayman Islands',
+  argentina = 'Argentina',
+  england = 'United Kingdom',
+  switzerland = 'Switzerland',
+  dubai = 'UAE',
+  south_africa = 'South Africa'
 }
