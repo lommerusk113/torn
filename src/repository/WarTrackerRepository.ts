@@ -1,6 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { WarMember } from "../Types/index.js"
-import { FactorId } from 'firebase/auth';
 
 export class WarTrackerRepository {
   private supabase: SupabaseClient;
