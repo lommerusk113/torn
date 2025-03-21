@@ -58,6 +58,11 @@ const getEnemy = async () => {
     const warId = Object.keys(faction.ranked_wars)[0];
     const war = faction.ranked_wars[warId];
 
+    if (!war) {
+        factionId = askeLadds
+        return
+    }
+
     const factionIds = Object.keys(war.factions);
 
     const opponentId = factionIds.find(id => id !== "41309");
@@ -78,7 +83,13 @@ const getLocation = (description: string) => {
         location.destination = Object.values(Locations).find(x => description.includes(x))!
     }
 
-    location.initiated = Date.now()
+    let now = Date.now()
+    if (now > 20000000000) {
+        now = now / 1000
+    }
+
+
+    location.initiated = now
 
     return location
 }

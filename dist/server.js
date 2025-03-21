@@ -15,5 +15,5 @@ app.listen(PORT, async () => {
     getEnemy();
     setInterval(trackUsers, 60000);
     setInterval(getEnemy, 5 * 60 * 1000);
-    setInterval(track, 5 * 1000);
+    setInterval(track, 1000);
 });
