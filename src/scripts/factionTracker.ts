@@ -30,7 +30,7 @@ const handleTracking = async () => {
 
         const current:WarMember | undefined = storedMembers.find(x => x.member_id === member.id)
 
-        const location = getLocation(member.status.description, member.status.state, current.location)
+        const location = getLocation(member.status.description, member.status.state, current?.location)
 
         return {
             member_id: member.id,
@@ -78,7 +78,7 @@ const getEnemy = async () => {
     factionId = opponentId!
 }
 
-const getLocation = (description: string, state: string, current: Location) => {
+const getLocation = (description: string, state: string, current?: Location) => {
 
     let location: Location = {} as Location
 
@@ -101,7 +101,7 @@ const getLocation = (description: string, state: string, current: Location) => {
         now = now / 1000
     }
 
-    if (current.current !== location.current || current.destination !== current.destination) {
+    if (current?.current !== location.current || current?.destination !== location.destination) {
         location.initiated = now
     }
 
