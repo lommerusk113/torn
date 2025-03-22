@@ -94,9 +94,9 @@ export interface MemberStatusRecord {
 }
 
 export enum UserStatus {
-  hospital = 'hospital',
-  okay = 'okay',
-  traveling = 'traveling'
+  hospital = 'Hospital',
+  okay = 'Okay',
+  traveling = 'Traveling'
 }
 
 export interface UserState {

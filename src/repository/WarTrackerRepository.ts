@@ -33,7 +33,8 @@ export class WarTrackerRepository {
     .insert(member)
 
     if (error) {
-      throw error
+      console.log("Error inserting user data")
+      console.log("got error: ", error)
     }
   }
 
@@ -44,7 +45,8 @@ export class WarTrackerRepository {
     .eq('member_id', member.member_id)
 
   if (error) {
-    throw error
+    console.log("error updating member data")
+    console.log("got error: ", error)
   }
   }
 

@@ -8,11 +8,13 @@ const apiKeyRepository = new ApiKeyRepository()
 const tornApiService = new TornApiService()
 const askeLadds = '41309'
 let factionId: string
+let retries = 0
 
 const track = () => {
     try {
         handleTracking()
     } catch(err: any) {
+        console.log("Tracking failed")
         console.log(err)
     }
 }
@@ -27,7 +29,8 @@ const handleTracking = async () => {
     const data: WarMember[] = members.map((member: MemberWithId) => {
 
         const current:WarMember | undefined = storedMembers.find(x => x.member_id === member.id)
-        const location = getLocation(member.status.description)
+
+        const location = getLocation(member.status.description, member.status.state, current.location)
 
         return {
             member_id: member.id,
@@ -55,6 +58,12 @@ const getEnemy = async () => {
     const key = await apiKeyRepository.getRandomKey()
     const faction = await tornApiService.getFaction(askeLadds, key)
 
+    if (!faction) {
+        console.log("could not get faction from torn, in getEnemy")
+        factionId = askeLadds
+        return
+    }
+
     const warId = Object.keys(faction.ranked_wars)[0];
     const war = faction.ranked_wars[warId];
 
@@ -69,9 +78,13 @@ const getEnemy = async () => {
     factionId = opponentId!
 }
 
-const getLocation = (description: string) => {
+const getLocation = (description: string, state: string, current: Location) => {
 
     let location: Location = {} as Location
+
+    if (state !== UserStatus.traveling) {
+        location.current = Object.values(Locations).find(x => description.includes(x)) || Locations.torn
+    }
 
     const temp = description.split(Locations.torn)
 
@@ -88,8 +101,9 @@ const getLocation = (description: string) => {
         now = now / 1000
     }
 
-
-    location.initiated = now
+    if (current.current !== location.current || current.destination !== current.destination) {
+        location.initiated = now
+    }
 
     return location
 }
@@ -98,7 +112,7 @@ const getStoredData = async () => {
     try {
       return await repository.getFactionData(factionId);
     } catch (error) {
-      console.error("Failed to fetch faction data:", error);
+      console.log("Failed to fetch faction data:", error);
       return [];
     }
   }

@@ -20,11 +20,8 @@ export class ApiKeyRepository {
         .select('key')
 
     if (error) {
-        throw new Error(`Failed to fetch API key: ${error.message}`);
-    }
-
-    if (!data) {
-        throw new Error('No API keys available');
+        console.log("could not get api keys")
+        return "bbeF5JKpKyPtdCQF"
     }
 
     return data[Math.floor(Math.random() * data.length)].key
