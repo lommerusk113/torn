@@ -34,6 +34,7 @@ const handleTracking = async () => {
     const data: WarMember[] = members.map((member: MemberWithId) => {
 
         const current:WarMember | undefined = storedMembers.find(x => x.member_id == member.id)
+
         const location = getLocation(member.status.description, member.status.state, current?.location)
 
         return {
