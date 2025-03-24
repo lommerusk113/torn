@@ -44,13 +44,15 @@ const handleTracking = async () => {
             faction_id: factionId,
             activity: member.last_action.status,
             status: {userStatus: member.status.state, untill: member.status.until || undefined},
-            location: current?.location.current === location.current ? current : location,
+            location: current?.location.current === location.current ? current.location : location,
         } as WarMember
 
     })
 
     for (const item of data) {
         if (storedMembers.length > 0) {
+            console.log(storedMembers.find(x => x.member_id == item.member_id))
+            console.log(item)
             await repository.updateFactionData(item)
         } else {
             await repository.insert(item)
