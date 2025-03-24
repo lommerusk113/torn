@@ -33,8 +33,7 @@ const handleTracking = async () => {
 
     const data: WarMember[] = members.map((member: MemberWithId) => {
 
-        const current:WarMember | undefined = storedMembers.find(x => x.member_id === member.id)
-
+        const current:WarMember | undefined = storedMembers.find(x => x.member_id == member.id)
         const location = getLocation(member.status.description, member.status.state, current?.location)
 
         return {
@@ -106,6 +105,7 @@ const getLocation = (description: string, state: string, current?: Location) => 
         now = now / 1000
     }
 
+    //console.log("current: ", current)
     if (current?.current !== location.current || current?.destination !== location.destination) {
         location.initiated = now
     }
