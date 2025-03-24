@@ -24,7 +24,12 @@ const handleTracking = async () => {
     const faction = await tornApiService.getFaction(factionId, key)
     const members = mapTornData(faction.members)
 
-    const storedMembers = await getStoredData()
+    let storedMembers
+    try {
+        storedMembers = await getStoredData()
+    } catch (error) {
+       return
+    }
 
     const data: WarMember[] = members.map((member: MemberWithId) => {
 
@@ -110,10 +115,10 @@ const getLocation = (description: string, state: string, current?: Location) => 
 
 const getStoredData = async () => {
     try {
-      return await repository.getFactionData(factionId);
+      return repository.getFactionData(factionId);
     } catch (error) {
       console.log("Failed to fetch faction data:", error);
-      return [];
+      throw error
     }
   }
 
