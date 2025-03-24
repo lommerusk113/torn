@@ -51,8 +51,6 @@ const handleTracking = async () => {
 
     for (const item of data) {
         if (storedMembers.length > 0) {
-            console.log(storedMembers.find(x => x.member_id == item.member_id))
-            console.log(item)
             await repository.updateFactionData(item)
         } else {
             await repository.insert(item)
@@ -108,7 +106,6 @@ const getLocation = (description: string, state: string, current?: Location) => 
         now = now / 1000
     }
 
-    //console.log("current: ", current)
     if (current?.current !== location.current || current?.destination !== location.destination) {
         location.initiated = now
     }
