@@ -10,9 +10,9 @@ const askeLadds = '41309'
 let factionId: string
 let retries = 0
 
-const track = () => {
+const track = async () => {
     try {
-        handleTracking()
+        await handleTracking()
     } catch(err: any) {
         console.log("Tracking failed")
         console.log(err)

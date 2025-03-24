@@ -12,14 +12,25 @@ app.use(cors());
 app.use(express.json());
 app.use("/api", routes);
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const runInterval = async (fn: () => Promise<void>, interval: number) => {
+  while(true) {
+    await fn();
+    await sleep(interval);
+  }
+};
+
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
 
   trackUsers()
   getEnemy()
 
-  setInterval(trackUsers, 60000);
-  setInterval(getEnemy, 5 * 60 * 1000);
-  setInterval(track, 1000);
+  Promise.all([
+    runInterval(() => trackUsers(), 60 * 1000),
+    runInterval(() => getEnemy(), 5 * 60 * 1000),
+    runInterval(() => track(), 1000)
+  ]);
 
 });

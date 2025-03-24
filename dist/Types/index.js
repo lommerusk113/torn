@@ -6,9 +6,9 @@ export var Status;
 })(Status || (Status = {}));
 export var UserStatus;
 (function (UserStatus) {
-    UserStatus["hospital"] = "hospital";
-    UserStatus["okay"] = "okay";
-    UserStatus["traveling"] = "traveling";
+    UserStatus["hospital"] = "Hospital";
+    UserStatus["okay"] = "Okay";
+    UserStatus["traveling"] = "Traveling";
 })(UserStatus || (UserStatus = {}));
 export var Locations;
 (function (Locations) {
