@@ -27,6 +27,17 @@ export class WarTrackerRepository {
     return data || []
   }
 
+  public async deleteFactionData(factionId: string): Promise<void> {
+    const { data, error } = await this.supabase
+    .from(this.table)
+    .delete()
+    .eq('faction_id', factionId)
+
+    if (error) {
+      throw error
+    }
+  }
+
   public async insert(member: WarMember ): Promise<void> {
     const { error } = await this.supabase
     .from(this.table)

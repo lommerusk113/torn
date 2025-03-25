@@ -65,6 +65,9 @@ const getEnemy = async () => {
 
     if (!faction) {
         console.log("could not get faction from torn, in getEnemy")
+        if (factionId !== askeLadds) {
+            await repository.deleteFactionData(factionId)
+        }
         factionId = askeLadds
         return
     }
@@ -73,6 +76,9 @@ const getEnemy = async () => {
     const war = faction.ranked_wars[warId];
 
     if (!war) {
+        if (factionId !== askeLadds) {
+            await repository.deleteFactionData(factionId)
+        }
         factionId = askeLadds
         return
     }
@@ -80,6 +86,9 @@ const getEnemy = async () => {
     const factionIds = Object.keys(war.factions);
 
     const opponentId = factionIds.find(id => id !== "41309");
+    if (factionId !== opponentId) {
+        await repository.deleteFactionData(factionId)
+    }
     factionId = opponentId!
 }
 
