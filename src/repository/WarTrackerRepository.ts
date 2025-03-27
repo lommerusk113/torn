@@ -5,9 +5,8 @@ export class WarTrackerRepository {
   private supabase: SupabaseClient;
   private table: string = 'war_tracker'
 
-  constructor() {
-
-    this.supabase = createClient(
+  constructor(client?: SupabaseClient) {
+    this.supabase = client || createClient(
       process.env.SUPABASE_URL || '',
       process.env.SUPABASE_KEY || ''
     );
