@@ -6,7 +6,7 @@ export class WarTracker {
   private apiKeyRepository: IApiKeyRepository;
   private tornApiService: ITornApiService;
   private askeLadds: string = '41309';
-  private factionId: string = '41309'; // Initialize with askeLadds as default
+  private factionId?: string
   private retries: number = 0;
 
   constructor(
@@ -29,6 +29,10 @@ export class WarTracker {
   }
 
   private async handleTracking(): Promise<void> {
+    if (!this.factionId) {
+      return
+    }
+
     const key = await this.apiKeyRepository.getRandomKey();
     const faction = await this.tornApiService.getFaction(this.factionId, key);
     const members = this.mapTornData(faction.members);
@@ -70,10 +74,6 @@ export class WarTracker {
 
     if (!faction) {
       console.log("could not get faction from torn, in getEnemy");
-      if (this.factionId !== this.askeLadds) {
-        await this.repository.deleteFactionData(this.factionId);
-      }
-      this.factionId = this.askeLadds;
       return;
     }
 
@@ -81,9 +81,10 @@ export class WarTracker {
     const war = faction.ranked_wars[warId];
 
     if (!war) {
-      if (this.factionId !== this.askeLadds) {
+      if (this.factionId) {
         await this.repository.deleteFactionData(this.factionId);
       }
+
       this.factionId = this.askeLadds;
       return;
     }
@@ -92,7 +93,9 @@ export class WarTracker {
     const opponentId = factionIds.find(id => id !== this.askeLadds);
 
     if (this.factionId !== opponentId) {
-      await this.repository.deleteFactionData(this.factionId);
+      if (this.factionId) {
+        await this.repository.deleteFactionData(this.factionId);
+      }
     }
     this.factionId = opponentId!;
   }
