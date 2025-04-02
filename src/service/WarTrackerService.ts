@@ -71,6 +71,7 @@ export class WarTracker {
   public async getEnemy(): Promise<void> {
     const key = await this.apiKeyRepository.getRandomKey();
     const faction = await this.tornApiService.getFaction(this.askeLadds, key);
+    console.log("got faction data: ", faction)
 
     if (!faction) {
       console.log("could not get faction from torn, in getEnemy");
@@ -131,7 +132,7 @@ export class WarTracker {
 
   private async getStoredData(): Promise<any> {
     try {
-      return this.repository.getFactionData(this.factionId);
+      return this.repository.getFactionData(this.factionId!);
     } catch (error) {
       console.log("Failed to fetch faction data:", error);
       throw error;
@@ -143,10 +144,5 @@ export class WarTracker {
       id: parseInt(id),
       ...member
     }));
-  }
-
-  // For testing purposes only - allows tests to access private property
-  public getCurrentFactionId(): string {
-    return this.factionId;
   }
 }

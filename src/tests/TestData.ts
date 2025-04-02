@@ -85,7 +85,7 @@ export const tornApiResponse = {
       "member_id": 274240,
       "member_name": "xXR1CKYXx",
       "level": 55,
-      "faction_id": "41309",
+      "faction_id": "42133",
       "activity": "Offline",
       "status": { "userStatus": "Okay", "untill": undefined },
       "location": { "current": "Torn", "destination": undefined, "initiated": 1743116378.54 }
@@ -94,7 +94,7 @@ export const tornApiResponse = {
       "member_id": 1361562,
       "member_name": "destrutor09",
       "level": 27,
-      "faction_id": "41309",
+      "faction_id": "42133",
       "activity": "Offline",
       "status": { "userStatus": "Traveling", "untill": undefined },
       "location": {
@@ -107,9 +107,27 @@ export const tornApiResponse = {
       "member_id": 3518349,
       "member_name": "Cortiom",
       "level": 18,
-      "faction_id": "41309",
+      "faction_id": "42133",
       "activity": "Offline",
       "status": { "userStatus": "Abroad", "untill": undefined },
       "location": { "current": "Torn", "destination": "UAE", "initiated": 1743116378.54 }
     }
   ]
+
+  export const askeladds = {
+    "ID": 41309,
+    "name": "Askeladds",
+    "ranked_wars": {
+      "23691": {
+        "factions": {
+          "41309": {
+            "name": "Askeladds"
+          },
+          "42133": {
+            "name": "A Ballet of Swans"
+          }
+        }
+      }
+    },
+    "members": {}
+  }

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { WarTracker } from '../service/WarTrackerService.js';
 import { ITornApiService, IApiKeyRepository, IWarTrackerRepository } from '../Types/interfaces.js';
 import { WarMember, UserStatus, Locations } from "../Types/index.js";
-import { expectedResult, tornApiResponse } from "./TestData.js"
+import { expectedResult, tornApiResponse, askeladds } from "./TestData.js"
 
 
 
@@ -52,10 +52,12 @@ describe('WarTracker', () => {
 
   describe('track', () => {
     it('Insert data without existing data', async () => {
-      // Setup mocks
+
       mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
-      mockTornApiService.getFaction.mockResolvedValue(tornApiResponse);
       mockWarTrackerRepository.getFactionData.mockResolvedValue([]);
+      mockTornApiService.getFaction
+        .mockResolvedValueOnce(askeladds)
+        .mockResolvedValueOnce(tornApiResponse)
 
       const insertCalls: any = [];
       mockWarTrackerRepository.insert.mockImplementation(data => {
@@ -63,11 +65,19 @@ describe('WarTracker', () => {
         return Promise.resolve();
       });
 
-      // Call the method
+      await warTracker.getEnemy()
       await warTracker.track();
 
-      // Then check the one that was actually used
       expect(insertCalls).toEqual(expectedResult);
+      expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(2);
+    });
+
+    it('Faction is at war', async () => {
+
+    });
+
+    it('Faction is NOT at war', async () => {
+
     });
   });
 });
