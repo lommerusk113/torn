@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { WarTracker } from '../service/WarTrackerService.js';
 import { ITornApiService, IApiKeyRepository, IWarTrackerRepository } from '../Types/interfaces.js';
 import { WarMember, UserStatus, Locations } from "../Types/index.js";
-import { expectedResult, tornApiResponse, askeladds } from "./TestData.js"
+import { expectedResult, tornApiResponse, askeladds, notAtWar } from "./TestData.js"
 
 
 
@@ -74,9 +74,36 @@ describe('WarTracker', () => {
 
     it('Faction is at war', async () => {
 
+      mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
+      mockTornApiService.getFaction.mockResolvedValueOnce(askeladds)
+
+      await warTracker.getEnemy()
+      const factionId = warTracker.getFactionId()
+      expect(factionId).toEqual('42133')
+
     });
 
     it('Faction is NOT at war', async () => {
+
+      mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
+      mockTornApiService.getFaction.mockResolvedValueOnce(notAtWar)
+
+      await warTracker.getEnemy()
+      const factionId = warTracker.getFactionId()
+      expect(factionId).toEqual('41309')
+
+    });
+
+    it('Api call fails', async () => {
+
+      mockApiKeyRepository.getRandomKey.mockResolvedValueOnce('test-api-key');
+      mockTornApiService.getFaction.mockResolvedValueOnce(notAtWar)
+
+      await warTracker.getEnemy()
+      await warTracker.getEnemy()
+
+      const factionId = warTracker.getFactionId()
+      expect(factionId).toEqual('41309')
 
     });
   });

@@ -71,7 +71,6 @@ export class WarTracker {
   public async getEnemy(): Promise<void> {
     const key = await this.apiKeyRepository.getRandomKey();
     const faction = await this.tornApiService.getFaction(this.askeLadds, key);
-    console.log("got faction data: ", faction)
 
     if (!faction) {
       console.log("could not get faction from torn, in getEnemy");
@@ -144,5 +143,9 @@ export class WarTracker {
       id: parseInt(id),
       ...member
     }));
+  }
+
+  public getFactionId() {
+    return this.factionId
   }
 }

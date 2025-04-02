@@ -131,3 +131,10 @@ export const tornApiResponse = {
     },
     "members": {}
   }
+
+  export const notAtWar = {
+    "ID": 41309,
+    "name": "Askeladds",
+    "ranked_wars": {},
+    "members": {}
+  }
