@@ -88,7 +88,7 @@ export const tornApiResponse = {
       "faction_id": "42133",
       "activity": "Offline",
       "status": { "userStatus": "Okay", "untill": undefined },
-      "location": { "current": "Torn", "destination": undefined, "initiated": 1743116378.54 }
+      "location": { "current": "Torn", "destination": undefined, "initiated": undefined }
     },
     {
       "member_id": 1361562,
@@ -110,7 +110,7 @@ export const tornApiResponse = {
       "faction_id": "42133",
       "activity": "Offline",
       "status": { "userStatus": "Abroad", "untill": undefined },
-      "location": { "current": "Torn", "destination": "UAE", "initiated": 1743116378.54 }
+      "location": { "current": "UAE", "destination": undefined, "initiated": undefined }
     }
   ]
 

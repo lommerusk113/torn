@@ -105,8 +105,8 @@ export class WarTracker {
 
     if (state !== UserStatus.traveling) {
       location.current = Object.values(Locations).find(x => description.includes(x)) || Locations.torn;
+      return location;
     }
-
     const temp = description.split(Locations.torn);
 
     if (temp.length > 1) {

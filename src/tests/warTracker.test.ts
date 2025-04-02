@@ -72,6 +72,29 @@ describe('WarTracker', () => {
       expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(2);
     });
 
+    it('New flight data should not be added if data is already in db', async () => {
+        mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
+        mockWarTrackerRepository.getFactionData.mockResolvedValue([]);
+        mockTornApiService.getFaction
+          .mockResolvedValueOnce(askeladds)
+          .mockResolvedValueOnce(tornApiResponse)
+
+        const insertCalls: any = [];
+        mockWarTrackerRepository.insert.mockImplementation(data => {
+          insertCalls.push(data);
+          return Promise.resolve();
+        });
+
+        await warTracker.getEnemy()
+        await warTracker.track();
+
+        vi.setSystemTime(new Date(1743622224));
+        await warTracker.track();
+
+        expect(insertCalls).toEqual(expectedResult);
+        expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(3);
+    });
+
     it('Faction is at war', async () => {
 
       mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
