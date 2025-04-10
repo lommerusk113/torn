@@ -1,133 +1,159 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { WarTracker } from '../service/WarTrackerService.js';
-import { ITornApiService, IApiKeyRepository, IWarTrackerRepository } from '../Types/interfaces.js';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { WarTracker } from "../service/WarTrackerService.js";
+import {
+	ITornApiService,
+	IApiKeyRepository,
+	IWarTrackerRepository,
+} from "../Types/interfaces.js";
 import { WarMember, UserStatus, Locations } from "../Types/index.js";
-import { expectedResult, tornApiResponse, askeladds, notAtWar } from "./TestData.js"
-
-
+import {
+	expectedResult,
+	tornApiResponse,
+	askeladds,
+	notAtWar,
+	dataToBeStored,
+	oldStoredData,
+	originalStatus,
+	newStatus,
+} from "./TestData.js";
 
 // Mock implementations
 class MockTornApiService implements ITornApiService {
-  getFaction = vi.fn();
+	getFaction = vi.fn();
 }
 
 class MockApiKeyRepository implements IApiKeyRepository {
-  getRandomKey = vi.fn();
+	getRandomKey = vi.fn();
 }
 
 class MockWarTrackerRepository implements IWarTrackerRepository {
-  getFactionData = vi.fn();
-  updateFactionData = vi.fn();
-  insert = vi.fn();
-  deleteFactionData = vi.fn();
+	getFactionData = vi.fn();
+	updateFactionData = vi.fn();
+	insert = vi.fn();
+	deleteFactionData = vi.fn();
 }
 
-describe('WarTracker', () => {
-  let warTracker: WarTracker;
-  let mockTornApiService: MockTornApiService;
-  let mockApiKeyRepository: MockApiKeyRepository;
-  let mockWarTrackerRepository: MockWarTrackerRepository;
-  let originalDateNow: () => number;
+describe("WarTracker", () => {
+	let warTracker: WarTracker;
+	let mockTornApiService: MockTornApiService;
+	let mockApiKeyRepository: MockApiKeyRepository;
+	let mockWarTrackerRepository: MockWarTrackerRepository;
+	let originalDateNow: () => number;
 
-  beforeEach(() => {
+	beforeEach(() => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(1743116378540));
 
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(1743116378540));
+		// Create new instances for each test
+		mockTornApiService = new MockTornApiService();
+		mockApiKeyRepository = new MockApiKeyRepository();
+		mockWarTrackerRepository = new MockWarTrackerRepository();
 
-    // Create new instances for each test
-    mockTornApiService = new MockTornApiService();
-    mockApiKeyRepository = new MockApiKeyRepository();
-    mockWarTrackerRepository = new MockWarTrackerRepository();
+		// Reset mocks
+		vi.clearAllMocks();
 
-    // Reset mocks
-    vi.clearAllMocks();
+		// Create WarTracker with mocked dependencies
+		warTracker = new WarTracker(
+			mockWarTrackerRepository,
+			mockApiKeyRepository,
+			mockTornApiService
+		);
+	});
 
-    // Create WarTracker with mocked dependencies
-    warTracker = new WarTracker(
-      mockWarTrackerRepository,
-      mockApiKeyRepository,
-      mockTornApiService
-    );
-  });
+	describe("track", () => {
+		it("Insert data without existing data", async () => {
+			mockApiKeyRepository.getRandomKey.mockResolvedValue("test-api-key");
+			mockWarTrackerRepository.getFactionData.mockResolvedValue([]);
+			mockTornApiService.getFaction
+				.mockResolvedValueOnce(askeladds)
+				.mockResolvedValueOnce(tornApiResponse);
 
-  describe('track', () => {
-    it('Insert data without existing data', async () => {
+			const insertCalls: any = [];
+			mockWarTrackerRepository.insert.mockImplementation((data) => {
+				insertCalls.push(data);
+				return Promise.resolve();
+			});
 
-      mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
-      mockWarTrackerRepository.getFactionData.mockResolvedValue([]);
-      mockTornApiService.getFaction
-        .mockResolvedValueOnce(askeladds)
-        .mockResolvedValueOnce(tornApiResponse)
+			await warTracker.getEnemy();
+			await warTracker.track();
 
-      const insertCalls: any = [];
-      mockWarTrackerRepository.insert.mockImplementation(data => {
-        insertCalls.push(data);
-        return Promise.resolve();
-      });
+			expect(insertCalls).toEqual(expectedResult);
+			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(2);
+		});
 
-      await warTracker.getEnemy()
-      await warTracker.track();
+		it("New flight data should not be added if data is already in db", async () => {
+			mockApiKeyRepository.getRandomKey.mockResolvedValue("test-api-key");
+			mockWarTrackerRepository.getFactionData.mockResolvedValue([]);
+			mockTornApiService.getFaction
+				.mockResolvedValueOnce(askeladds)
+				.mockResolvedValueOnce(tornApiResponse);
 
-      expect(insertCalls).toEqual(expectedResult);
-      expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(2);
-    });
+			const insertCalls: any = [];
+			mockWarTrackerRepository.insert.mockImplementation((data) => {
+				insertCalls.push(data);
+				return Promise.resolve();
+			});
 
-    it('New flight data should not be added if data is already in db', async () => {
-        mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
-        mockWarTrackerRepository.getFactionData.mockResolvedValue([]);
-        mockTornApiService.getFaction
-          .mockResolvedValueOnce(askeladds)
-          .mockResolvedValueOnce(tornApiResponse)
+			await warTracker.getEnemy();
+			await warTracker.track();
 
-        const insertCalls: any = [];
-        mockWarTrackerRepository.insert.mockImplementation(data => {
-          insertCalls.push(data);
-          return Promise.resolve();
-        });
+			vi.setSystemTime(new Date(1743622224));
+			await warTracker.track();
 
-        await warTracker.getEnemy()
-        await warTracker.track();
+			expect(insertCalls).toEqual(expectedResult);
+			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(3);
+		});
 
-        vi.setSystemTime(new Date(1743622224));
-        await warTracker.track();
+		it("One user changes their status", async () => {
+			mockApiKeyRepository.getRandomKey.mockResolvedValue("test-api-key");
+			mockWarTrackerRepository.getFactionData.mockResolvedValue(oldStoredData);
+			mockTornApiService.getFaction
+				.mockResolvedValueOnce(askeladds)
+				.mockResolvedValueOnce(newStatus);
 
-        expect(insertCalls).toEqual(expectedResult);
-        expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(3);
-    });
+			const insertCalls: any = [];
+			mockWarTrackerRepository.updateFactionData.mockImplementation((data) => {
+				insertCalls.push(data);
+				return Promise.resolve();
+			});
 
-    it('Faction is at war', async () => {
+			await warTracker.getEnemy();
+			await warTracker.track();
 
-      mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
-      mockTornApiService.getFaction.mockResolvedValueOnce(askeladds)
+			vi.setSystemTime(new Date(1743622224));
+			await warTracker.track();
 
-      await warTracker.getEnemy()
-      const factionId = warTracker.getFactionId()
-      expect(factionId).toEqual('42133')
+			expect(insertCalls).toEqual(dataToBeStored);
+			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(3);
+		});
 
-    });
+		it("Faction is at war", async () => {
+			mockApiKeyRepository.getRandomKey.mockResolvedValue("test-api-key");
+			mockTornApiService.getFaction.mockResolvedValueOnce(askeladds);
 
-    it('Faction is NOT at war', async () => {
+			await warTracker.getEnemy();
+			const factionId = warTracker.getFactionId();
+			expect(factionId).toEqual("42133");
+		});
 
-      mockApiKeyRepository.getRandomKey.mockResolvedValue('test-api-key');
-      mockTornApiService.getFaction.mockResolvedValueOnce(notAtWar)
+		it("Faction is NOT at war", async () => {
+			mockApiKeyRepository.getRandomKey.mockResolvedValue("test-api-key");
+			mockTornApiService.getFaction.mockResolvedValueOnce(notAtWar);
 
-      await warTracker.getEnemy()
-      const factionId = warTracker.getFactionId()
-      expect(factionId).toEqual('41309')
+			await warTracker.getEnemy();
+			const factionId = warTracker.getFactionId();
+			expect(factionId).toEqual("41309");
+		});
 
-    });
+		it("Api call fails", async () => {
+			mockApiKeyRepository.getRandomKey.mockResolvedValueOnce("test-api-key");
+			mockTornApiService.getFaction.mockResolvedValueOnce(notAtWar);
 
-    it('Api call fails', async () => {
+			await warTracker.getEnemy();
+			await warTracker.getEnemy();
 
-      mockApiKeyRepository.getRandomKey.mockResolvedValueOnce('test-api-key');
-      mockTornApiService.getFaction.mockResolvedValueOnce(notAtWar)
-
-      await warTracker.getEnemy()
-      await warTracker.getEnemy()
-
-      const factionId = warTracker.getFactionId()
-      expect(factionId).toEqual('41309')
-
-    });
-  });
+			const factionId = warTracker.getFactionId();
+			expect(factionId).toEqual("41309");
+		});
+	});
 });
