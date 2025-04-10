@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint 'src/**/*.ts' --fix",
-    "test": "vitest"
+    "test": "vitest",
+    "docker": "docker build -t askeladds . && docker run askeladds"
   },
   "keywords": [],
   "author": "",

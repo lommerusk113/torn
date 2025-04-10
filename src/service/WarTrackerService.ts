@@ -47,6 +47,9 @@ export class WarTracker {
 
 		const key = await this.apiKeyRepository.getRandomKey();
 		const faction = await this.tornApiService.getFaction(this.factionId, key);
+		if (!faction) {
+			return;
+		}
 		const members = this.mapTornData(faction.members);
 
 		let storedMembers;
