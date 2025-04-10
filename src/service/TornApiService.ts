@@ -33,7 +33,6 @@ export class TornApiService {
 
 	private async _fetchFromTorn(endpoint: string, key: string) {
 		const url = `${this.baseUrl}/${endpoint}&key=${key}`;
-		console.log(url);
 		try {
 			const response = await fetch(url);
 			if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
