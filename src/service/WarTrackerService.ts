@@ -88,6 +88,16 @@ export class WarTracker {
 		});
 
 		for (const item of data) {
+			const current: WarMember | undefined = storedMembers.find(
+				(x: WarMember) => {
+					return x.member_id.toString() == item.member_id.toString();
+				}
+			);
+
+			if (current && this.isEqual(item, current)) {
+				continue;
+			}
+
 			if (storedMembers.length > 0) {
 				await this.repository.updateFactionData(item);
 			} else {
@@ -186,6 +196,16 @@ export class WarTracker {
 			id: parseInt(id),
 			...member,
 		}));
+	}
+
+	private isEqual(a: WarMember, b: WarMember) {
+		return (
+			a.activity == b.activity &&
+			a.destination == b.destination &&
+			a.level == b.level &&
+			a.location == b.location &&
+			a.status.userStatus == b.status.userStatus
+		);
 	}
 
 	public getFactionId() {
