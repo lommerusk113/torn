@@ -86,6 +86,7 @@ export class WarTracker {
 						: location,
 			} as WarMember;
 		});
+		console.log("add logging for restart");
 
 		for (const item of data) {
 			const current: WarMember | undefined = storedMembers.find(
