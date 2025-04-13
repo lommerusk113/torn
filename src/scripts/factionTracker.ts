@@ -93,33 +93,38 @@ const getEnemy = async () => {
 }
 
 const getLocation = (description: string, state: string, current?: Location) => {
+    let location: Location = {} as Location;
 
-    let location: Location = {} as Location
 
     if (state !== UserStatus.traveling) {
-        location.current = Object.values(Locations).find(x => description.includes(x)) || Locations.torn
-    }
-
-    const temp = description.split(Locations.torn)
-
-    if (temp.length > 1) {
-        location.destination = Locations.torn
-        location.current = Object.values(Locations).find(x => temp[1].includes(x))!
+        location.current = Object.values(Locations).find(x => description.includes(x)) || Locations.torn;
     } else {
-        location.current = Locations.torn
-        location.destination = Object.values(Locations).find(x => description.includes(x))!
+
+        const travelingToPattern = /Traveling to (.+)/i;  
+        const match = description.match(travelingToPattern);
+
+        if (match && match[1]) {
+
+            location.current = Locations.torn; 
+            location.destination = match[1].trim();  
+        } else {
+
+            location.current = Locations.torn;
+            location.destination = description.trim();  
+        }
     }
 
-    let now = Date.now()
+
+    let now = Date.now();
     if (now > 20000000000) {
-        now = now / 1000
+        now = now / 1000;
     }
 
     if (current?.current !== location.current || current?.destination !== location.destination) {
-        location.initiated = now
+        location.initiated = now;
     }
 
-    return location
+    return location;
 }
 
 const getStoredData = async () => {
