@@ -33,20 +33,21 @@ export class WarTracker {
 
 	public async track(): Promise<void> {
 		try {
-			await this.handleTracking();
+			await this.handleTracking(this.factionId);
+			await this.handleTracking(this.askeLadds);
 		} catch (err: any) {
 			console.log("Tracking failed");
 			console.log(err);
 		}
 	}
 
-	private async handleTracking(): Promise<void> {
-		if (!this.factionId) {
+	private async handleTracking(factionId?: string): Promise<void> {
+		if (!factionId) {
 			return;
 		}
 
 		const key = await this.apiKeyRepository.getRandomKey();
-		const faction = await this.tornApiService.getFaction(this.factionId, key);
+		const faction = await this.tornApiService.getFaction(factionId, key);
 		if (!faction) {
 			return;
 		}
@@ -54,7 +55,7 @@ export class WarTracker {
 
 		let storedMembers;
 		try {
-			storedMembers = await this.getStoredData();
+			storedMembers = await this.getStoredData(factionId);
 		} catch (error) {
 			return;
 		}
@@ -73,7 +74,7 @@ export class WarTracker {
 				member_id: member.id,
 				member_name: member.name,
 				level: member.level,
-				faction_id: this.factionId,
+				faction_id: factionId,
 				activity: member.last_action.status,
 				status: {
 					userStatus: member.status.state,
@@ -86,7 +87,6 @@ export class WarTracker {
 						: location,
 			} as WarMember;
 		});
-		console.log("add logging for restart");
 
 		for (const item of data) {
 			const current: WarMember | undefined = storedMembers.find(
@@ -99,7 +99,7 @@ export class WarTracker {
 				continue;
 			}
 
-			if (storedMembers.length > 0) {
+			if (current) {
 				await this.repository.updateFactionData(item);
 			} else {
 				await this.repository.insert(item);
@@ -181,9 +181,9 @@ export class WarTracker {
 		return location;
 	}
 
-	private async getStoredData(): Promise<any> {
+	private async getStoredData(factionId: string): Promise<any> {
 		try {
-			return this.repository.getFactionData(this.factionId!);
+			return this.repository.getFactionData(factionId);
 		} catch (error) {
 			console.log("Failed to fetch faction data:", error);
 			throw error;
