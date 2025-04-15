@@ -142,7 +142,7 @@ describe("WarTracker", () => {
 
 			await warTracker.getEnemy();
 			const factionId = warTracker.getFactionId();
-			expect(factionId).toEqual("41309");
+			expect(factionId).toEqual(undefined);
 		});
 
 		it("Api call fails", async () => {
@@ -153,7 +153,7 @@ describe("WarTracker", () => {
 			await warTracker.getEnemy();
 
 			const factionId = warTracker.getFactionId();
-			expect(factionId).toEqual("41309");
+			expect(factionId).toEqual(undefined);
 		});
 	});
 });

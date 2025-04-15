@@ -123,9 +123,7 @@ export class WarTracker {
 			if (this.factionId) {
 				await this.repository.deleteFactionData(this.factionId);
 			}
-
-			this.factionId = this.askeLadds;
-			return;
+			return (this.factionId = undefined);
 		}
 
 		const factionIds = Object.keys(war.factions);
