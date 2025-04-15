@@ -78,7 +78,7 @@ describe("WarTracker", () => {
 			await warTracker.track();
 
 			expect(insertCalls).toEqual(expectedResult);
-			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(2);
+			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(3);
 		});
 
 		it("New flight data should not be added if data is already in db", async () => {
@@ -101,7 +101,7 @@ describe("WarTracker", () => {
 			await warTracker.track();
 
 			expect(insertCalls).toEqual(expectedResult);
-			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(3);
+			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(5);
 		});
 
 		it("One user changes their status", async () => {
@@ -124,7 +124,7 @@ describe("WarTracker", () => {
 			await warTracker.track();
 
 			expect(insertCalls).toEqual(dataToBeStored);
-			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(3);
+			expect(mockTornApiService.getFaction).toHaveBeenCalledTimes(5);
 		});
 
 		it("Faction is at war", async () => {

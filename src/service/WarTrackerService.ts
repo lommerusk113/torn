@@ -166,16 +166,11 @@ export class WarTracker {
 			)!;
 		}
 
-		let now = Date.now();
-		if (now > 20000000000) {
-			now = now / 1000;
-		}
-
 		if (
 			current?.current !== location.current ||
 			current?.destination !== location.destination
 		) {
-			location.initiated = now;
+			location.initiated = Date.now();
 		}
 
 		return location;

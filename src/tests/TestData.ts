@@ -106,7 +106,7 @@ export const originalStatus = {
 			days_in_faction: 1004,
 			last_action: {
 				status: "Offline",
-				timestamp: 1743102651,
+				timestamp: 1743116378540,
 				relative: "3 hours ago",
 			},
 			status: {
@@ -129,7 +129,7 @@ export const newStatus = {
 			days_in_faction: 1004,
 			last_action: {
 				status: "Offline",
-				timestamp: 1743102651,
+				timestamp: 1743116378540,
 				relative: "3 hours ago",
 			},
 			status: {
@@ -167,7 +167,7 @@ export const dataToBeStored = [
 		location: {
 			current: "Torn",
 			destination: "South Africa",
-			initiated: 1743116378.54,
+			initiated: 1743116378540,
 		},
 	},
 ];
@@ -192,7 +192,7 @@ export const expectedResult = [
 		location: {
 			destination: "Torn",
 			current: "South Africa",
-			initiated: 1743116378.54,
+			initiated: 1743116378540,
 		},
 	},
 	{
@@ -205,7 +205,7 @@ export const expectedResult = [
 		location: {
 			current: "Torn",
 			destination: "South Africa",
-			initiated: 1743116378.54,
+			initiated: 1743116378540,
 		},
 	},
 	{
