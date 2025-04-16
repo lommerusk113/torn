@@ -119,7 +119,7 @@ export class WarTracker {
 		const warId = Object.keys(faction.ranked_wars)[0];
 		const war = faction.ranked_wars[warId];
 
-		if (!war || !!war.war.end) {
+		if (!war || !!war.war?.end) {
 			if (this.factionId) {
 				await this.repository.deleteFactionData(this.factionId);
 			}
@@ -134,6 +134,7 @@ export class WarTracker {
 				await this.repository.deleteFactionData(this.factionId);
 			}
 		}
+		console.log("setting opponent: ", opponentId);
 		this.factionId = opponentId!;
 	}
 

@@ -95,6 +95,24 @@ export const tornApiResponse = {
 			},
 			position: "Member",
 		},
+		"3593952": {
+			name: "SkjeggeLadd",
+			level: 26,
+			days_in_faction: 65,
+			last_action: {
+				status: "Idle",
+				timestamp: 1744794676,
+				relative: "2 minutes ago",
+			},
+			status: {
+				description: "In hospital for 1 hrs 3 mins ",
+				details: "Severe emesis following Ipecac Syrup ingestion",
+				state: "Hospital",
+				color: "red",
+				until: 1744798620,
+			},
+			position: "Adventurer",
+		},
 	},
 };
 
@@ -216,6 +234,15 @@ export const expectedResult = [
 		activity: "Offline",
 		status: { userStatus: "Abroad", untill: undefined },
 		location: { current: "UAE", destination: undefined, initiated: undefined },
+	},
+	{
+		member_id: 3593952,
+		member_name: "SkjeggeLadd",
+		level: 26,
+		faction_id: "42133",
+		activity: "Idle",
+		status: { userStatus: "Hospital", untill: 1744798620 },
+		location: { current: "Torn" },
 	},
 ];
 
