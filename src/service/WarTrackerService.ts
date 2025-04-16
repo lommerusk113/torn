@@ -78,7 +78,7 @@ export class WarTracker {
 				activity: member.last_action.status,
 				status: {
 					userStatus: member.status.state,
-					untill: member.status.until || undefined,
+					untill: member.status.until * 1000 || undefined,
 				},
 				location:
 					current?.location.current === location.current &&

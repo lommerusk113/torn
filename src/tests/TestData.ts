@@ -241,7 +241,7 @@ export const expectedResult = [
 		level: 26,
 		faction_id: "42133",
 		activity: "Idle",
-		status: { userStatus: "Hospital", untill: 1744798620 },
+		status: { userStatus: "Hospital", untill: 1744798620000 },
 		location: { current: "Torn" },
 	},
 ];
