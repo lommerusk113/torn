@@ -6,6 +6,7 @@ import {
 	Status,
 	Location,
 	Locations,
+	HospitalAbroad,
 } from "../Types/index.js";
 import {
 	ITornApiService,
@@ -138,6 +139,39 @@ export class WarTracker {
 		this.factionId = opponentId!;
 	}
 
+	private getCountryFromHospitalMessage = (description: String) => {
+		const country = Object.values(HospitalAbroad).find((x) =>
+			description.includes(x)
+		);
+
+		switch (country) {
+			case HospitalAbroad.argentinian:
+				return Locations.argentina;
+			case HospitalAbroad.british:
+				return Locations.england;
+			case HospitalAbroad.caymenian:
+				return Locations.cayman_islands;
+			case HospitalAbroad.chineese:
+				return Locations.china;
+			case HospitalAbroad.canadian:
+				return Locations.canada;
+			case HospitalAbroad.hawaiian:
+				return Locations.hawaii;
+			case HospitalAbroad.japanese:
+				return Locations.japan;
+			case HospitalAbroad.emirati:
+				return Locations.dubai;
+			case HospitalAbroad.mexican:
+				return Locations.mexico;
+			case HospitalAbroad.south_african:
+				return Locations.south_africa;
+			case HospitalAbroad.swiss:
+				return Locations.switzerland;
+			default:
+				return Locations.torn;
+		}
+	};
+
 	private getLocation(
 		description: string,
 		state: string,
@@ -146,9 +180,14 @@ export class WarTracker {
 		let location: Location = {} as Location;
 
 		if (state !== UserStatus.traveling) {
-			location.current =
-				Object.values(Locations).find((x) => description.includes(x)) ||
-				Locations.torn;
+			if (Object.values(HospitalAbroad).find((x) => description.includes(x))) {
+				location.current = this.getCountryFromHospitalMessage(description);
+			} else {
+				location.current =
+					Object.values(Locations).find((x) => description.includes(x)) ||
+					Locations.torn;
+			}
+
 			return location;
 		}
 		const temp = description.split(Locations.torn);
