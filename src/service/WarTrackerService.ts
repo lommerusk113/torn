@@ -149,7 +149,7 @@ export class WarTracker {
 				return Locations.argentina;
 			case HospitalAbroad.british:
 				return Locations.england;
-			case HospitalAbroad.caymenian:
+			case HospitalAbroad.caymanian:
 				return Locations.cayman_islands;
 			case HospitalAbroad.chineese:
 				return Locations.china;
