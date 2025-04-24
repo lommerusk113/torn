@@ -32,9 +32,15 @@ export class TornApiService {
 	}
 
 	private async _fetchFromTorn(endpoint: string, key: string) {
-		const url = `${this.baseUrl}/${endpoint}&key=${key}`;
+		const cacheBuster = Date.now();
+		const url = `${this.baseUrl}/${endpoint}&key=${key}&_cb=${cacheBuster}`;
 		try {
-			const response = await fetch(url);
+			const response = await fetch(url, {
+				headers: {
+					"Cache-Control": "no-cache, no-store",
+					Pragma: "no-cache",
+				},
+			});
 			if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
 			const data = await response.json();
 			if (data.error) throw new Error(`Torn API Error: ${data.error.error}`);

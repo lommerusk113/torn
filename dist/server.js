@@ -1,18 +1,18 @@
-import './env.js';
+import "./env.js";
 import express from "express";
 import cors from "cors";
 import routes from "./routes/index.js";
 import trackUsers from "./scripts/tracker.js";
-import WarTrackerRepository from './repository/WarTrackerRepository.js';
-import ApiKeyRepository from './repository/ApiKeyRepository.js';
-import { TornApiService } from './service/TornApiService.js';
-import { WarTracker } from './service/WarTrackerService.js';
+import WarTrackerRepository from "./repository/WarTrackerRepository.js";
+import ApiKeyRepository from "./repository/ApiKeyRepository.js";
+import { TornApiService } from "./service/TornApiService.js";
+import { WarTracker } from "./service/WarTrackerService.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use("/api", routes);
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const runInterval = async (fn, interval) => {
     while (true) {
         await fn();
@@ -27,6 +27,6 @@ app.listen(PORT, async () => {
     Promise.all([
         runInterval(() => trackUsers(), 60 * 1000),
         runInterval(() => warTracker.getEnemy(), 5 * 60 * 1000),
-        runInterval(() => warTracker.track(), 1000)
+        runInterval(() => warTracker.track(), 2000),
     ]);
 });

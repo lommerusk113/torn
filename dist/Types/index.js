@@ -10,6 +10,20 @@ export var UserStatus;
     UserStatus["okay"] = "Okay";
     UserStatus["traveling"] = "Traveling";
 })(UserStatus || (UserStatus = {}));
+export var HospitalAbroad;
+(function (HospitalAbroad) {
+    HospitalAbroad["canadian"] = "Canadian";
+    HospitalAbroad["emirati"] = "Emirati";
+    HospitalAbroad["british"] = "british";
+    HospitalAbroad["south_african"] = "South African";
+    HospitalAbroad["argentinian"] = "Argentinian";
+    HospitalAbroad["hawaiian"] = "Hawaiian";
+    HospitalAbroad["caymanian"] = "Caymanian";
+    HospitalAbroad["mexican"] = "Mexican";
+    HospitalAbroad["japanese"] = "Japanese";
+    HospitalAbroad["chineese"] = "Chineese";
+    HospitalAbroad["swiss"] = "Swiss";
+})(HospitalAbroad || (HospitalAbroad = {}));
 export var Locations;
 (function (Locations) {
     Locations["torn"] = "Torn";
