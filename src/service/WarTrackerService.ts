@@ -309,6 +309,7 @@ export class WarTracker {
 			a.location.destination === b.location.destination &&
 			a.location.initiated === b.location.initiated &&
 			a.status.userStatus == b.status.userStatus &&
+			a.status.untill == b.status.untill &&
 			a.bsp === b.bsp
 		);
 	}
