@@ -27,6 +27,6 @@ app.listen(PORT, async () => {
     Promise.all([
         runInterval(() => trackUsers(), 60 * 1000),
         runInterval(() => warTracker.getEnemy(), 5 * 60 * 1000),
-        runInterval(() => warTracker.track(), 2000),
+        runInterval(() => warTracker.track(), 1000),
     ]);
 });

@@ -1,13 +1,18 @@
 import { FactionData } from "../Types/index.js";
-export class TornApiService {
+import { ITornApiService } from "../Types/interfaces.js";
+export class TornApiService implements ITornApiService {
 	private baseUrl: string;
 
 	constructor() {
 		this.baseUrl = "https://api.torn.com";
 	}
 
-	public async getUser(userId: string, key: string) {
-		return this._fetchFromTorn(`user/${userId}?selections=basic`, key);
+	public async getUser(
+		userId: string,
+		key: string,
+		selection: string = "basic"
+	) {
+		return this._fetchFromTorn(`user/${userId}?selections=${selection}`, key);
 	}
 
 	public async getUserStats(userId: string, key: string) {
@@ -19,6 +24,16 @@ export class TornApiService {
 		apiKey: string
 	): Promise<FactionData> {
 		return this._fetchFromTorn(`faction/${factionId}?selections=basic`, apiKey);
+	}
+
+	public async getFactionMembers(
+		factionId: string,
+		apiKey: string
+	): Promise<FactionData> {
+		return this._fetchFromTorn(
+			`v2/faction/${factionId}?selections=members`,
+			apiKey
+		);
 	}
 
 	public async checkHospital(
@@ -33,7 +48,7 @@ export class TornApiService {
 
 	private async _fetchFromTorn(endpoint: string, key: string) {
 		const cacheBuster = Date.now();
-		const url = `${this.baseUrl}/${endpoint}&key=${key}&_cb=${cacheBuster}`;
+		const url = `${this.baseUrl}/${endpoint}&key=${key}&timestamp=${cacheBuster}`;
 		try {
 			const response = await fetch(url, {
 				headers: {

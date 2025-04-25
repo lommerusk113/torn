@@ -20,6 +20,8 @@ import {
 // Mock implementations
 class MockTornApiService implements ITornApiService {
 	getFaction = vi.fn();
+	getUser = vi.fn();
+	getFactionMembers = vi.fn();
 }
 
 class MockApiKeyRepository implements IApiKeyRepository {

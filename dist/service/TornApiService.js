@@ -3,14 +3,17 @@ export class TornApiService {
     constructor() {
         this.baseUrl = "https://api.torn.com";
     }
-    async getUser(userId, key) {
-        return this._fetchFromTorn(`user/${userId}?selections=basic`, key);
+    async getUser(userId, key, selection = "basic") {
+        return this._fetchFromTorn(`user/${userId}?selections=${selection}`, key);
     }
     async getUserStats(userId, key) {
         return this._fetchFromTorn(`user/${userId}?selections=battlestats`, key);
     }
     async getFaction(factionId, apiKey) {
         return this._fetchFromTorn(`faction/${factionId}?selections=basic`, apiKey);
+    }
+    async getFactionMembers(factionId, apiKey) {
+        return this._fetchFromTorn(`v2/faction/${factionId}?selections=members`, apiKey);
     }
     async checkHospital(userId, key) {
         const userData = await this.getUser(userId, key);
@@ -20,7 +23,7 @@ export class TornApiService {
     }
     async _fetchFromTorn(endpoint, key) {
         const cacheBuster = Date.now();
-        const url = `${this.baseUrl}/${endpoint}&key=${key}&_cb=${cacheBuster}`;
+        const url = `${this.baseUrl}/${endpoint}&key=${key}&timestamp=${cacheBuster}`;
         try {
             const response = await fetch(url, {
                 headers: {
