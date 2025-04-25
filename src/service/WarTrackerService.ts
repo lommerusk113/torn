@@ -103,7 +103,13 @@ export class WarTracker {
 			if (current) {
 				await this.repository.updateFactionData(item);
 			} else {
-				await this.repository.insert(item);
+				const data = item;
+				const response = await fetch(
+					`http://www.lol-manager.com/api/battlestats/y7VF6FWBRE1QHQ5X/${item.member_id}/9.3.2`
+				);
+				const bspResult = await response.json();
+				data.bsp = bspResult.TBS_Raw;
+				await this.repository.insert(data);
 			}
 		}
 	}
@@ -240,7 +246,8 @@ export class WarTracker {
 			a.location.current === b.location.current &&
 			a.location.destination === b.location.destination &&
 			a.location.initiated === b.location.initiated &&
-			a.status.userStatus == b.status.userStatus
+			a.status.userStatus == b.status.userStatus &&
+			a.bsp === b.bsp
 		);
 	}
 

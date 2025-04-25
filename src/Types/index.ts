@@ -126,6 +126,7 @@ export interface WarMember {
 	destination?: string;
 	location: Location;
 	level: number;
+	bsp?: number;
 }
 
 export enum HospitalAbroad {
