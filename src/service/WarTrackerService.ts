@@ -147,7 +147,7 @@ export class WarTracker {
 		const user = tornStats?.faction?.members[item.member_id].spy;
 
 		const spyDate = user?.timestamp * 1000;
-		const timeToCheck = new Date().getTime() - 15768000000;
+		const timeToCheck = new Date().getTime() - 604800000;
 
 		if (spyDate > timeToCheck) {
 			stats.bsp = user.total;
