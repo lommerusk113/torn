@@ -1,3 +1,4 @@
+import { response } from "express";
 import {
 	WarMember,
 	FactionMember,
@@ -7,6 +8,7 @@ import {
 	Location,
 	Locations,
 	HospitalAbroad,
+	Combatstats,
 } from "../Types/index.js";
 import {
 	ITornApiService,
@@ -21,6 +23,7 @@ export class WarTracker {
 	private askeLadds: string = "41309";
 	private factionId?: string;
 	private retries: number = 0;
+	private updateBsp: boolean = false;
 
 	constructor(
 		repository: IWarTrackerRepository,
@@ -101,17 +104,76 @@ export class WarTracker {
 			}
 
 			if (current) {
+				if (this.updateBsp) {
+					const bsp = await this.getBsp(item);
+
+					if (bsp.bsp !== current.bsp) {
+						item.bsp = bsp.bsp;
+						item.defence = bsp.defence;
+						item.strength = bsp.strength;
+						item.dexterity = bsp.dexterity;
+						item.speed = bsp.speed;
+					}
+				}
+
 				await this.repository.updateFactionData(item);
 			} else {
 				const data = item;
-				const response = await fetch(
-					`http://www.lol-manager.com/api/battlestats/y7VF6FWBRE1QHQ5X/${item.member_id}/9.3.2`
-				);
-				const bspResult = await response.json();
-				data.bsp = bspResult.TBS_Raw;
+				const bsp = await this.getBsp(item);
+
+				data.bsp = bsp.bsp;
+				data.strength = bsp.strength;
+				data.speed = bsp.speed;
+				data.defence = bsp.defence;
+				data.dexterity = bsp.dexterity;
+
 				await this.repository.insert(data);
 			}
 		}
+		if (this.updateBsp) {
+			this.updateBsp = false;
+		}
+	}
+
+	public async getBsp(item: WarMember) {
+		const stats = {} as Combatstats;
+
+		const response = await fetch(
+			`http://www.lol-manager.com/api/battlestats/y7VF6FWBRE1QHQ5X/${item.member_id}/9.3.2`
+		);
+		const bspResult = await response.json();
+
+		const tornStats: any = await this.getTornstatsData(item.faction_id);
+		const user = tornStats?.faction?.members[item.member_id].spy;
+
+		const spyDate = user?.timestamp * 1000;
+		const timeToCheck = new Date().getTime() - 15768000000;
+
+		if (spyDate > timeToCheck) {
+			stats.bsp = user.total;
+			stats.strength = user.strength;
+			stats.defence = user.defense;
+			stats.speed = user.speed;
+			stats.dexterity = user.dexterity;
+
+			return stats;
+		}
+
+		stats.bsp = bspResult.TBS_Raw;
+
+		return stats;
+	}
+
+	public toggleUpdateBsp() {
+		this.updateBsp = true;
+	}
+
+	public async getTornstatsData(factionId: string) {
+		const response = await fetch(
+			`https://www.tornstats.com/api/v2/TS_GXMmoxIMoCJ5HfPG/spy/faction/${factionId}`
+		);
+		const result = await response.json();
+		return result;
 	}
 
 	public async getEnemy(): Promise<void> {

@@ -115,6 +115,14 @@ export interface Location {
 	initiated?: number;
 }
 
+export interface Combatstats {
+	bsp: number;
+	strength?: number;
+	defence?: number;
+	speed?: number;
+	dexterity?: number;
+}
+
 export interface WarMember {
 	id?: number;
 	member_id: number;
@@ -127,6 +135,10 @@ export interface WarMember {
 	location: Location;
 	level: number;
 	bsp?: number;
+	strength?: number;
+	defence?: number;
+	dexterity?: number;
+	speed?: number;
 }
 
 export enum HospitalAbroad {

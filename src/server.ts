@@ -18,7 +18,10 @@ app.use("/api", routes);
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const runInterval = async (fn: () => Promise<void>, interval: number) => {
+const runInterval = async (
+	fn: () => Promise<void> | void,
+	interval: number
+) => {
 	while (true) {
 		await fn();
 		await sleep(interval);
@@ -41,5 +44,6 @@ app.listen(PORT, async () => {
 		runInterval(() => trackUsers(), 60 * 1000),
 		runInterval(() => warTracker.getEnemy(), 5 * 60 * 1000),
 		runInterval(() => warTracker.track(), 1000),
+		runInterval(() => warTracker.toggleUpdateBsp(), 15 * 60 * 1000),
 	]);
 });
