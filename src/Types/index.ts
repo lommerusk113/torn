@@ -151,7 +151,7 @@ export enum HospitalAbroad {
 	caymanian = "Caymanian",
 	mexican = "Mexican",
 	japanese = "Japanese",
-	chineese = "Chineese",
+	chineese = "Chinese",
 	swiss = "Swiss",
 }
 
