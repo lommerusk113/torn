@@ -144,7 +144,7 @@ export interface WarMember {
 export enum HospitalAbroad {
 	canadian = "Canadian",
 	emirati = "Emirati",
-	british = "british",
+	british = "British",
 	south_african = "South African",
 	argentinian = "Argentinian",
 	hawaiian = "Hawaiian",
