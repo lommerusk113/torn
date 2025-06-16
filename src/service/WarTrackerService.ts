@@ -116,10 +116,24 @@ export class WarTracker {
 					}
 				}
 
+				if (current.location.destination !== item.location.destination) {
+					item.alerted = false;
+				}
+
 				await this.repository.updateFactionData(item);
 			} else {
 				const data = item;
 				const bsp = await this.getBsp(item);
+				const apiKey = await this.apiKeyRepository.getRandomKey();
+
+				if (item.faction_id === this.askeLadds) {
+					const discordReponse = await this.tornApiService.getDiscordId(
+						item.member_id,
+						apiKey
+					);
+
+					data.discord_id = discordReponse.discord.discordID;
+				}
 
 				data.bsp = bsp.bsp;
 				data.strength = bsp.strength;

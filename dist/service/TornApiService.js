@@ -6,6 +6,9 @@ export class TornApiService {
     async getUser(userId, key, selection = "basic") {
         return this._fetchFromTorn(`user/${userId}?selections=${selection}`, key);
     }
+    async getDiscordId(userId, key) {
+        return await this._fetchFromTorn(`user/${userId}?selections=discord`, key);
+    }
     async getUserStats(userId, key) {
         return this._fetchFromTorn(`user/${userId}?selections=battlestats`, key);
     }

@@ -5,6 +5,7 @@ export interface ITornApiService {
 	getFaction(factionId: string, apiKey: string): Promise<any>;
 	getUser(userId: string, key: string, selection: string): Promise<any>;
 	getFactionMembers(factionId: string, apiKey: string): Promise<any>;
+	getDiscordId(userId: number, key: string): Promise<any>;
 }
 
 export interface IApiKeyRepository {

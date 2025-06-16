@@ -15,6 +15,10 @@ export class TornApiService implements ITornApiService {
 		return this._fetchFromTorn(`user/${userId}?selections=${selection}`, key);
 	}
 
+	public async getDiscordId(userId: number, key: string) {
+		return await this._fetchFromTorn(`user/${userId}?selections=discord`, key);
+	}
+
 	public async getUserStats(userId: string, key: string) {
 		return this._fetchFromTorn(`user/${userId}?selections=battlestats`, key);
 	}

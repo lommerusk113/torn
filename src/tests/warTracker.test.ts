@@ -22,6 +22,7 @@ class MockTornApiService implements ITornApiService {
 	getFaction = vi.fn();
 	getUser = vi.fn();
 	getFactionMembers = vi.fn();
+	getDiscordId = vi.fn();
 }
 
 class MockApiKeyRepository implements IApiKeyRepository {

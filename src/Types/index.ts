@@ -139,6 +139,8 @@ export interface WarMember {
 	defence?: number;
 	dexterity?: number;
 	speed?: number;
+	discord_id: string;
+	alerted: boolean;
 }
 
 export enum HospitalAbroad {

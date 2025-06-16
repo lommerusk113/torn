@@ -14,14 +14,14 @@ export var HospitalAbroad;
 (function (HospitalAbroad) {
     HospitalAbroad["canadian"] = "Canadian";
     HospitalAbroad["emirati"] = "Emirati";
-    HospitalAbroad["british"] = "british";
+    HospitalAbroad["british"] = "British";
     HospitalAbroad["south_african"] = "South African";
     HospitalAbroad["argentinian"] = "Argentinian";
     HospitalAbroad["hawaiian"] = "Hawaiian";
     HospitalAbroad["caymanian"] = "Caymanian";
     HospitalAbroad["mexican"] = "Mexican";
     HospitalAbroad["japanese"] = "Japanese";
-    HospitalAbroad["chineese"] = "Chineese";
+    HospitalAbroad["chineese"] = "Chinese";
     HospitalAbroad["swiss"] = "Swiss";
 })(HospitalAbroad || (HospitalAbroad = {}));
 export var Locations;
