@@ -183,8 +183,9 @@ export class WarTracker {
 	}
 
 	public async getTornstatsData(factionId: string) {
+		const tornStatsToken = process.env.TORNSTATS_TOKEN;
 		const response = await fetch(
-			`https://www.tornstats.com/api/v2/TS_GXMmoxIMoCJ5HfPG/spy/faction/${factionId}`
+			`https://www.tornstats.com/api/v2/${tornStatsToken}/spy/faction/${factionId}`
 		);
 		const result = await response.json();
 		return result;
