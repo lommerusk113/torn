@@ -20,7 +20,7 @@ export class WarTracker {
 	private repository: IWarTrackerRepository;
 	private apiKeyRepository: IApiKeyRepository;
 	private tornApiService: ITornApiService;
-	private askeLadds: string = "41309";
+	private alliedFaction: string = process.env.ALLIED_FACTION!;
 	private factionId?: string;
 	private retries: number = 0;
 	private updateBsp: boolean = false;
@@ -38,7 +38,7 @@ export class WarTracker {
 	public async track(): Promise<void> {
 		try {
 			await this.handleTracking(this.factionId);
-			await this.handleTracking(this.askeLadds);
+			await this.handleTracking(this.alliedFaction);
 		} catch (err: any) {
 			console.log("Tracking failed");
 			console.log(err);
@@ -126,7 +126,7 @@ export class WarTracker {
 				const bsp = await this.getBsp(item);
 				const apiKey = await this.apiKeyRepository.getRandomKey();
 
-				if (item.faction_id === this.askeLadds) {
+				if (item.faction_id === this.alliedFaction) {
 					const discordReponse = await this.tornApiService.getDiscordId(
 						item.member_id,
 						apiKey
@@ -193,7 +193,10 @@ export class WarTracker {
 
 	public async getEnemy(): Promise<void> {
 		const key = await this.apiKeyRepository.getRandomKey();
-		const faction = await this.tornApiService.getFaction(this.askeLadds, key);
+		const faction = await this.tornApiService.getFaction(
+			this.alliedFaction,
+			key
+		);
 
 		if (!faction) {
 			console.log("could not get faction from torn, in getEnemy");
@@ -211,7 +214,7 @@ export class WarTracker {
 		}
 
 		const factionIds = Object.keys(war.factions);
-		const opponentId = factionIds.find((id) => id !== this.askeLadds);
+		const opponentId = factionIds.find((id) => id !== this.alliedFaction);
 
 		if (this.factionId !== opponentId) {
 			if (this.factionId) {
