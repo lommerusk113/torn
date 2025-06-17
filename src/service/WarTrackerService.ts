@@ -340,14 +340,12 @@ export class WarTracker {
 	private isEqual(a: WarMember, b: WarMember) {
 		return (
 			a.activity === b.activity &&
-			a.destination === b.destination &&
 			a.level === b.level &&
 			a.location.current === b.location.current &&
 			a.location.destination === b.location.destination &&
 			a.location.initiated === b.location.initiated &&
 			a.status.userStatus == b.status.userStatus &&
-			a.status.untill == b.status.untill &&
-			a.bsp === b.bsp
+			a.status.untill == b.status.untill
 		);
 	}
 
