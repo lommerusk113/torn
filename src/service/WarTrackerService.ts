@@ -221,7 +221,6 @@ export class WarTracker {
 				await this.repository.deleteFactionData(this.factionId);
 			}
 		}
-		console.log("setting opponent: ", opponentId);
 		this.factionId = opponentId!;
 	}
 
