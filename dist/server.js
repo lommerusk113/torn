@@ -25,7 +25,7 @@ app.listen(PORT, async () => {
     trackUsers();
     warTracker.getEnemy();
     Promise.all([
-        runInterval(() => console.log("Health check: ", new Date()), 60 * 1000),
+        runInterval(() => console.log("Health check: ", new Date()), 60 * 1000 * 15),
         runInterval(() => trackUsers(), 60 * 1000),
         runInterval(() => warTracker.getEnemy(), 5 * 60 * 1000),
         runInterval(() => warTracker.track(), 1000),

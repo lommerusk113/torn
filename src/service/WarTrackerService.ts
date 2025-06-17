@@ -92,70 +92,77 @@ export class WarTracker {
 			} as WarMember;
 		});
 
-		// Optimized: Process all members in parallel
-		const memberOperations = data.map(async (item) => {
-			const current: WarMember | undefined = storedMembers.find(
-				(x: WarMember) => {
-					return x.member_id.toString() == item.member_id.toString();
-				}
-			);
+		// Process in batches to avoid overwhelming external APIs
+		const BATCH_SIZE = 10; // Adjust based on API rate limits
 
-			if (current && this.isEqual(item, current)) {
-				return; // Skip unchanged members
-			}
+		for (let i = 0; i < data.length; i += BATCH_SIZE) {
+			const batch = data.slice(i, i + BATCH_SIZE);
 
-			if (current) {
-				// Update existing member
-				if (this.updateBsp) {
-					const bsp = await this.getBsp(item);
-
-					if (bsp.bsp !== current.bsp) {
-						item.bsp = bsp.bsp;
-						item.defence = bsp.defence;
-						item.strength = bsp.strength;
-						item.dexterity = bsp.dexterity;
-						item.speed = bsp.speed;
+			const batchOperations = batch.map(async (item) => {
+				const current: WarMember | undefined = storedMembers.find(
+					(x: WarMember) => {
+						return x.member_id.toString() == item.member_id.toString();
 					}
+				);
+
+				if (current && this.isEqual(item, current)) {
+					return;
 				}
 
-				if (current.location.destination !== item.location.destination) {
-					item.alerted = false;
+				if (current) {
+					if (this.updateBsp) {
+						const bsp = await this.getBsp(item);
+
+						if (bsp.bsp !== current.bsp) {
+							item.bsp = bsp.bsp;
+							item.defence = bsp.defence;
+							item.strength = bsp.strength;
+							item.dexterity = bsp.dexterity;
+							item.speed = bsp.speed;
+						}
+					}
+
+					if (current.location.destination !== item.location.destination) {
+						item.alerted = false;
+					}
+
+					await this.repository.updateFactionData(item);
+				} else {
+					const memberData = { ...item };
+
+					const promises: Promise<any>[] = [
+						this.getBsp(item),
+						this.apiKeyRepository.getRandomKey(),
+					];
+
+					const [bsp, apiKey] = await Promise.all(promises);
+
+					if (item.faction_id === this.alliedFaction) {
+						const discordResponse = await this.tornApiService.getDiscordId(
+							item.member_id,
+							apiKey
+						);
+						memberData.discord_id = discordResponse.discord.discordID;
+					}
+
+					memberData.bsp = bsp.bsp;
+					memberData.strength = bsp.strength;
+					memberData.speed = bsp.speed;
+					memberData.defence = bsp.defence;
+					memberData.dexterity = bsp.dexterity;
+
+					await this.repository.insert(memberData);
 				}
+			});
 
-				await this.repository.updateFactionData(item);
-			} else {
-				// Insert new member
-				const memberData = { ...item };
+			// Process each batch in parallel
+			await Promise.all(batchOperations);
 
-				// Run BSP and Discord API calls in parallel for new members
-				const promises: Promise<any>[] = [
-					this.getBsp(item),
-					this.apiKeyRepository.getRandomKey(),
-				];
-
-				const [bsp, apiKey] = await Promise.all(promises);
-
-				// Handle Discord ID if needed
-				if (item.faction_id === this.alliedFaction) {
-					const discordResponse = await this.tornApiService.getDiscordId(
-						item.member_id,
-						apiKey
-					);
-					memberData.discord_id = discordResponse.discord.discordID;
-				}
-
-				memberData.bsp = bsp.bsp;
-				memberData.strength = bsp.strength;
-				memberData.speed = bsp.speed;
-				memberData.defence = bsp.defence;
-				memberData.dexterity = bsp.dexterity;
-
-				await this.repository.insert(memberData);
+			// Optional: Add a small delay between batches to be gentle on APIs
+			if (i + BATCH_SIZE < data.length) {
+				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
-		});
-
-		// Execute all member operations in parallel
-		await Promise.all(memberOperations);
+		}
 
 		if (this.updateBsp) {
 			this.updateBsp = false;
