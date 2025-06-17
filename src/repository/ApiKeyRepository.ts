@@ -2,6 +2,7 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class ApiKeyRepository {
 	private supabase: SupabaseClient;
+	private randomKey: number = 0;
 
 	constructor() {
 		this.supabase = createClient(
@@ -21,6 +22,12 @@ export class ApiKeyRepository {
 			console.log(new Date());
 			console.log("error fetching api keys: ", error);
 			return "bbeF5JKpKyPtdCQF";
+		}
+
+		this.randomKey = this.randomKey + 1;
+
+		if (this.randomKey % 100 === 0) {
+			console.log(`getRandomKey has been called ${this.randomKey} times`);
 		}
 
 		return data[Math.floor(Math.random() * data.length)].key;
