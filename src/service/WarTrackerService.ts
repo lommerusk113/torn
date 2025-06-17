@@ -92,7 +92,8 @@ export class WarTracker {
 			} as WarMember;
 		});
 
-		for (const item of data) {
+		// Optimized: Process all members in parallel
+		const memberOperations = data.map(async (item) => {
 			const current: WarMember | undefined = storedMembers.find(
 				(x: WarMember) => {
 					return x.member_id.toString() == item.member_id.toString();
@@ -100,10 +101,11 @@ export class WarTracker {
 			);
 
 			if (current && this.isEqual(item, current)) {
-				continue;
+				return; // Skip unchanged members
 			}
 
 			if (current) {
+				// Update existing member
 				if (this.updateBsp) {
 					const bsp = await this.getBsp(item);
 
@@ -122,28 +124,39 @@ export class WarTracker {
 
 				await this.repository.updateFactionData(item);
 			} else {
-				const data = item;
-				const bsp = await this.getBsp(item);
-				const apiKey = await this.apiKeyRepository.getRandomKey();
+				// Insert new member
+				const memberData = { ...item };
 
+				// Run BSP and Discord API calls in parallel for new members
+				const promises: Promise<any>[] = [
+					this.getBsp(item),
+					this.apiKeyRepository.getRandomKey(),
+				];
+
+				const [bsp, apiKey] = await Promise.all(promises);
+
+				// Handle Discord ID if needed
 				if (item.faction_id === this.alliedFaction) {
-					const discordReponse = await this.tornApiService.getDiscordId(
+					const discordResponse = await this.tornApiService.getDiscordId(
 						item.member_id,
 						apiKey
 					);
-
-					data.discord_id = discordReponse.discord.discordID;
+					memberData.discord_id = discordResponse.discord.discordID;
 				}
 
-				data.bsp = bsp.bsp;
-				data.strength = bsp.strength;
-				data.speed = bsp.speed;
-				data.defence = bsp.defence;
-				data.dexterity = bsp.dexterity;
+				memberData.bsp = bsp.bsp;
+				memberData.strength = bsp.strength;
+				memberData.speed = bsp.speed;
+				memberData.defence = bsp.defence;
+				memberData.dexterity = bsp.dexterity;
 
-				await this.repository.insert(data);
+				await this.repository.insert(memberData);
 			}
-		}
+		});
+
+		// Execute all member operations in parallel
+		await Promise.all(memberOperations);
+
 		if (this.updateBsp) {
 			this.updateBsp = false;
 		}

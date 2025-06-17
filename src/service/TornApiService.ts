@@ -63,6 +63,9 @@ export class TornApiService implements ITornApiService {
 			if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
 			const data = await response.json();
 			if (data.error) throw new Error(`Torn API Error: ${data.error.error}`);
+			if (data.error && data.error.error === "Too many requests") {
+				console.log(endpoint);
+			}
 			return data;
 		} catch (error: any) {
 			console.error("Error fetching data:", error.message);
